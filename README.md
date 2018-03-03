@@ -1,3 +1,9 @@
+# M^2Scorer (compatible with both Python 2 and 3)
+
+** (Keisuke Sakaguchi) This is a modified version of the original M^2Scorer to be compatible with both Python 2 and 3.
+
+
+
 **************************************************************************************************
 **THIS IS A DEVELOPMENTAL REPOSITORY FOR M2Scorer**   
 **FOR AN OFFICIAL VERSION (VERSION 3.2), visit http://www.comp.nus.edu.sg/~nlp/conll14st.html**  

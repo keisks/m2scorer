@@ -30,7 +30,7 @@
 #   --ignore_whitespace_casing  -  Ignore edits that only affect whitespace and caseing. Default no."
 #
 
-import sys
+import os, sys
 import levenshtein
 from getopt import getopt
 from util import paragraphs
@@ -44,7 +44,7 @@ def load_annotation(gold_file):
     fgold = smart_open(gold_file, 'r')
     puffer = fgold.read()
     fgold.close()
-    puffer = puffer.decode('utf8')
+    #puffer = puffer.decode('utf8')
     for item in paragraphs(puffer.splitlines(True)):
         item = item.splitlines(False)
         sentence = [line[2:].strip() for line in item if line.startswith('S ')]
@@ -66,7 +66,7 @@ def load_annotation(gold_file):
             # NOTE: start and end are *token* offsets
             original = ' '.join(' '.join(sentence).split()[start_offset:end_offset])
             annotator = int(fields[5])
-            if annotator not in annotations.keys():
+            if annotator not in list(annotations.keys()):
                 annotations[annotator] = []
             annotations[annotator].append((start_offset, end_offset, original, corrections))
         tok_offset = 0
@@ -74,7 +74,7 @@ def load_annotation(gold_file):
             tok_offset += len(this_sentence.split())
             source_sentences.append(this_sentence)
             this_edits = {}
-            for annotator, annotation in annotations.iteritems():
+            for annotator, annotation in annotations.items():
                 this_edits[annotator] = [edit for edit in annotation if edit[0] <= tok_offset and edit[1] <= tok_offset and edit[0] >= 0 and edit[1] >= 0]
             if len(this_edits) == 0:
                 this_edits[0] = []
@@ -83,16 +83,16 @@ def load_annotation(gold_file):
 
 
 def print_usage():
-    print >> sys.stderr, "Usage: m2scorer.py [OPTIONS] proposed_sentences gold_source"
-    print >> sys.stderr, "where"
-    print >> sys.stderr, "  proposed_sentences   -   system output, sentence per line"
-    print >> sys.stderr, "  source_gold          -   source sentences with gold token edits"
-    print >> sys.stderr, "OPTIONS"
-    print >> sys.stderr, "  -v    --verbose                   -  print verbose output"
-    print >> sys.stderr, "        --very_verbose              -  print lots of verbose output"
-    print >> sys.stderr, "        --max_unchanged_words N     -  Maximum unchanged words when extraction edit. Default 2."
-    print >> sys.stderr, "        --beta B                    -  Beta value for F-measure. Default 0.5."
-    print >> sys.stderr, "        --ignore_whitespace_casing  -  Ignore edits that only affect whitespace and caseing. Default no."
+    print("Usage: m2scorer.py [OPTIONS] proposed_sentences gold_source", )
+    print("where", )
+    print("  proposed_sentences   -   system output, sentence per line", )
+    print("  source_gold          -   source sentences with gold token edits", )
+    print("OPTIONS", )
+    print("  -v    --verbose                   -  print verbose output", )
+    print("        --very_verbose              -  print lots of verbose output", )
+    print("        --max_unchanged_words N     -  Maximum unchanged words when extraction edit. Default 2.", )
+    print("        --beta B                    -  Beta value for F-measure. Default 0.5.", )
+    print("        --ignore_whitespace_casing  -  Ignore edits that only affect whitespace and caseing. Default no.", )
 
 
 
@@ -114,7 +114,7 @@ for o, v in opts:
     elif o == '--ignore_whitespace_casing':
         ignore_whitespace_casing = True
     else:
-        print >> sys.stderr, "Unknown option :", o
+        print("Unknown option :", o, )
         print_usage()
         sys.exit(-1)
 
@@ -131,12 +131,13 @@ source_sentences, gold_edits = load_annotation(gold_file)
 
 # load system hypotheses
 fin = smart_open(system_file, 'r')
-system_sentences = [line.decode("utf8").strip() for line in fin.readlines()]
+#system_sentences = [line.decode("utf8").strip() for line in fin.readlines()]
+system_sentences = [line.strip() for line in fin.readlines()]
 fin.close()
 
 p, r, f1 = levenshtein.batch_multi_pre_rec_f1(system_sentences, source_sentences, gold_edits, max_unchanged_words, beta, ignore_whitespace_casing, verbose, very_verbose)
 
-print "Precision   : %.4f" % p
-print "Recall      : %.4f" % r
-print "F_%.1f       : %.4f" % (beta, f1)
+print("Precision   : %.4f" % p)
+print("Recall      : %.4f" % r)
+print("F_%.1f       : %.4f" % (beta, f1))
 

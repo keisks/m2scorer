@@ -40,7 +40,7 @@ for line in sys.stdin:
     if line.startswith("S "):
         sentence = line[2:]
         sentence_tok = "S " + ' '.join(tokenizer.tokenize(sentence))
-        print sentence_tok.encode("utf8")
+        print(sentence_tok.encode("utf8"))
     elif line.startswith("A "):
         fields = line[2:].split('|||')
         start_end = fields[0]
@@ -56,7 +56,7 @@ for line in sys.stdin:
         corrections = [(' '.join(tokenizer.tokenize(c))).strip() for c in fields[2].split('||')]
         fields[2] = '||'.join(corrections)
         annotation =  "A " + '|||'.join(fields)
-        print annotation.encode("utf8")
+        print(annotation.encode("utf8"))
     else:
-        print line.encode("utf8")
+        print(line.encode("utf8"))
 

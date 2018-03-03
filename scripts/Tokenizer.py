@@ -174,4 +174,4 @@ if __name__ == "__main__":
         line = line.decode("utf8")
         tokens = tokenizer.tokenize(line.strip())
         out = ' '.join(tokens)
-        print out.encode("utf8")
+        print(out.encode("utf8"))
